@@ -1,3 +1,15 @@
+function convertUIntArray8ToHex(arr){
+    let string = ""
+    for (let i = 0; i < arr.length; i++) {
+        let element = arr[i];
+        let str = element.toString(16)
+        console.log(str)
+        string = string + str + '.';
+    }
+    string = string.slice(0, -1);
+    return string;
+}
+
 function isAlphaNumeric(str) {
     var code, i, len;
 
@@ -12,29 +24,12 @@ function isAlphaNumeric(str) {
     return true;
 };
 
-function passwordValidation(pass){
-    var code, i, len;
-
-    for (i = 0, len = pass.length; i < len; i++) {
-        code = pass.charCodeAt(i);
-        if(
-        (code > 47 && code < 58) && // numeric (0-9)
-        (code > 64 && code < 91) && // upper alpha (A-Z)
-        (code > 96 && code < 123)
-        ){
-            continue;
-        }
-
-        let acceptedCharacters = [33, 35, 36, 37, 38, 45, 63, 64, 95, 61];
-        if(!acceptedCharacters.includes(i)){
-            return false;
-        }
-    }
-    return true;
+function passwordValidation(pass) {
+    return /^[\x00-\x7F]+$/.test(pass);
 }
 
 let errorSet = false;
-function setErrorMessage(error){
+function setErrorMessage(error) {
     errorSet = true;
     $('#message').html(error + '<br>');
 }
@@ -47,50 +42,71 @@ function processRegistration() {
     let password2 = $('#passwordInput2').val();
     let registerCode = $('#registerCode').val();
 
-    if(username == '' || password1 == '' || password2 == '' || registerCode == ''){
+    if (username == '' || password1 == '' || password2 == '' || registerCode == '') {
         setErrorMessage('Please input all the required fields.');
     }
 
-    if(!isAlphaNumeric(username)){
+    if (!isAlphaNumeric(username)) {
         setErrorMessage('Username must consist of only alphanumeric characters.')
     }
 
-    if(!isAlphaNumeric(registerCode)){
+    if (!isAlphaNumeric(registerCode)) {
         setErrorMessage('Register code must consist of only alphanumeric characters.')
     }
 
-    if(username.length > 20 || username.length < 3){
+    if (username.length > 20 || username.length < 3) {
         setErrorMessage('Username must be between 3 and 20 characters.')
     }
 
-    if(password1.length > 32 || password1.length < 8){
+    if (password1.length > 32 || password1.length < 8) {
         setErrorMessage('Password must be between 8 and 32 characters.')
     }
 
-    if(registerCode.length != 5){
+    if (registerCode.length != 5) {
         setErrorMessage('Register code must be exactly 5 characters.')
     }
 
-    if(password2 != password1){
+    if (password2 != password1) {
         setErrorMessage('Passwords do not match.')
     }
 
-    //if(!passwordValidation(password1)){
-    //    setErrorMessage('Password contains characters which are not allowed.')
-    //}
+    if(!passwordValidation(password1)){
+        setErrorMessage('Password contains characters which are not allowed.')
+    }
 
     // Username between 3-20 alphanumeric characters.
     // password between 8-32 characters
     // register code 10 alphanumeric characters.
 
-    if(!errorSet){  
+    if (!errorSet) {
         keyPair = nacl.box.keyPair();
         console.log(keyPair)
-        privKey = nacl.util.encodeUTF8(keyPair.secretKey);
-        pubKey = nacl.util.encodeUTF8(keyPair.publicKey);
-        localStorage.setItem('privKey', privkey)
+        privKey = convertUIntArray8ToHex(keyPair.secretKey);
+        pubKey = convertUIntArray8ToHex(keyPair.publicKey);
+        console.log(privKey);
+        console.log(pubKey);
+        let privKeyEnc = CryptoJS.AES.encrypt(privKey, password1).toString();
+        localStorage.setItem('privKey', privKeyEnc)
         localStorage.setItem('pubKey', pubKey)
         localStorage.setItem('username', username);
-        console.log(privKey, pubKey);
+        console.log({
+            username: username,
+            pubKey: pubKey,
+            privKey: privKeyEnc,
+            registerCode: registerCode
+        })
+        fetch(config.server + "api/register", {
+            method: "POST",
+            body: JSON.stringify({
+                username: username,
+                pubKey: pubKey,
+                privKey: privKeyEnc,
+                registerCode: registerCode
+            }),
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            }
+        });
+
     }
 }
