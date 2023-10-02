@@ -32,8 +32,8 @@ app.post('/api/register', (req, res) => {
     let privkey = req.body.privKey;
     let registerCode = req.body.registerCode;
 
-    if (username == '' || password1 == '' || password2 == '' || registerCode == '') {
-        setErrorMessage('Please input all the required fields.');
+    if (username == '' || pubKey == '' || privkey == '' || registerCode == '') {
+        return res.send({error: true, description: 'Please input all the required fields.'});
     }
 
     if (!isAlphaNumeric(username)) {
