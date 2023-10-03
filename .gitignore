@@ -1,2 +1,6 @@
 node_modules
 config.json
+.idea/vcs.xml
+.idea/SSPChat.iml
+.idea/modules.xml
+.idea/jsLibraryMappings.xml

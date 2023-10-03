@@ -4,7 +4,7 @@ let app = express();
 let port = config.app.port;
 
 function isAlphaNumeric(str) {
-    var code, i, len;
+    let code, i, len;
 
     for (i = 0, len = str.length; i < len; i++) {
         code = str.charCodeAt(i);
@@ -15,7 +15,7 @@ function isAlphaNumeric(str) {
         }
     }
     return true;
-};
+}
 
 app.use(express.json());
 
@@ -32,24 +32,24 @@ app.post('/api/register', (req, res) => {
     let privkey = req.body.privKey;
     let registerCode = req.body.registerCode;
 
-    if (username == '' || pubKey == '' || privkey == '' || registerCode == '') {
+    if (username === '' || pubKey === '' || privkey === '' || registerCode === '') {
         return res.send({error: true, description: 'Please input all the required fields.'});
     }
 
     if (!isAlphaNumeric(username)) {
-        setErrorMessage('Username must consist of only alphanumeric characters.')
+        return res.send({error: true, description: 'Username must only consist of alphanumeric characters.'});
     }
 
     if (!isAlphaNumeric(registerCode)) {
-        setErrorMessage('Register code must consist of only alphanumeric characters.')
+        return res.send({error: true, description: 'Register code must only consist of alphanumeric characters.'});
     }
 
     if (username.length > 20 || username.length < 3) {
-        setErrorMessage('Username must be between 3 and 20 characters.')
+        return res.send({error: true, description: 'Username must be between 3 and 20 characters.'});
     }
 
-    if (registerCode.length != 5 || !config.app.registrationCodes.includes(registerCode)) {
-        setErrorMessage('Register code must be exactly 5 characters.')
+    if (registerCode.length !== 5 || !config.app.registrationCodes.includes(registerCode)) {
+        return res.send({error: true, description: 'Register code must be exactly 5 characters long.'});
     }
 
 
