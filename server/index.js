@@ -103,12 +103,14 @@ app.post('/api/register', (req, res) => {
 
     console.log(pubKey, privKey)
     con.query(
-        `INSER INTO users (username, pubKey, ePrivKey, avatar) VALUES(?, ?, ?, ?)`,
+        `INSERT INTO users (username, pubKey, ePrivKey, avatar) VALUES (?, ?, ?, ?)`,
         [username, pubKey, privKey, 'default.png'],
         function(err, results, fields){
+            console.log(err)
             if(!err){
                 return res.send({error: false, description: 'Success!'})
             } else {
+                
                 return res.send({error: true, description: 'There was a database issue while trying to create a new user. Contact the owner of this instance of SSP Chat for more information.'});
             }
     })

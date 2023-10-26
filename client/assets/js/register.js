@@ -92,9 +92,6 @@ function processRegistration() {
         privKey = convertUIntArray8ToHex(keyPair.secretKey);
         pubKey = convertUIntArray8ToHex(keyPair.publicKey);
         let privKeyEnc = CryptoJS.AES.encrypt(privKey, password1).toString();
-        localStorage.setItem('privKey', privKeyEnc)
-        localStorage.setItem('pubKey', pubKey)
-        localStorage.setItem('username', username);
         console.log({
             username: username,
             pubKey: pubKey,
@@ -114,10 +111,14 @@ function processRegistration() {
             }
         }).then(response => 
             response.json().then(data =>{
+                console.log(data)
                 if(data.error){
-                    setErrorMessage(data.message)
+                    setErrorMessage(data.description)
                 } else {
-                    
+                    localStorage.setItem('privKey', privKeyEnc)
+                    localStorage.setItem('pubKey', pubKey)
+                    localStorage.setItem('username', username);
+
                 }
         }));   
 
