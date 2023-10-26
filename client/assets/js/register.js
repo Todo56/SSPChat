@@ -1,7 +1,4 @@
-function goToApp() {
-    console.log('red')
-    window.location.replace("./app/index.html");
-}
+
 
 function convertUIntArray8ToHex(arr) {
     let string = ""
@@ -32,6 +29,13 @@ function isAlphaNumeric(str) {
 function passwordValidation(pass) {
     return /^[\x00-\x7F]+$/.test(pass);
 }
+function goToApp() {
+    console.log('red')
+    window.location.replace("./app/index.html");
+}
+if (localStorage.getItem('privKey') && localStorage.getItem('pubKey')) {
+    goToApp();
+}
 
 let errorSet = false;
 function setErrorMessage(error) {
@@ -39,14 +43,10 @@ function setErrorMessage(error) {
     $('#message').html(error + '<br>');
 }
 
-if (localStorage.getItem('privKey') && localStorage.getItem('pubKey')) {
-    goToApp();
-}
-
 function processRegistration() {
     setErrorMessage('')
     errorSet = false;
-    let username = $('#emailInput').val();
+    let username = $('#usernameInput').val();
     let password1 = $('#passwordInput').val();
     let password2 = $('#passwordInput2').val();
     let registerCode = $('#registerCode').val();

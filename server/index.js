@@ -100,8 +100,6 @@ app.post('/api/register', (req, res) => {
     if (!config.app.registrationCodes.includes(registerCode)) {
         return res.send({ error: true, description: 'This register code is not valid.' });
     }
-
-    console.log(pubKey, privKey)
     con.query(
         `INSERT INTO users (username, pubKey, ePrivKey, avatar) VALUES (?, ?, ?, ?)`,
         [username, pubKey, privKey, 'default.png'],
@@ -115,6 +113,8 @@ app.post('/api/register', (req, res) => {
             }
         })
 });
+
+app.post("/api/login")
 
 app.listen(port, () => {
     console.log('Listening.');
