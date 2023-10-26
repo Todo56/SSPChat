@@ -1,9 +1,9 @@
-function goToApp(){
+function goToApp() {
     console.log('red')
     window.location.replace("./app/index.html");
 }
 
-function convertUIntArray8ToHex(arr){
+function convertUIntArray8ToHex(arr) {
     let string = ""
     for (let i = 0; i < arr.length; i++) {
         let element = arr[i];
@@ -39,7 +39,7 @@ function setErrorMessage(error) {
     $('#message').html(error + '<br>');
 }
 
-if(localStorage.getItem('privKey') && localStorage.getItem('pubKey')){
+if (localStorage.getItem('privKey') && localStorage.getItem('pubKey')) {
     goToApp();
 }
 
@@ -79,7 +79,7 @@ function processRegistration() {
         setErrorMessage('Passwords do not match.')
     }
 
-    if(!passwordValidation(password1)){
+    if (!passwordValidation(password1)) {
         setErrorMessage('Password contains characters which are not allowed.')
     }
 
@@ -109,18 +109,17 @@ function processRegistration() {
             headers: {
                 "Content-type": "application/json; charset=UTF-8"
             }
-        }).then(response => 
-            response.json().then(data =>{
+        }).then(response =>
+            response.json().then(data => {
                 console.log(data)
-                if(data.error){
+                if (data.error) {
                     setErrorMessage(data.description)
                 } else {
                     localStorage.setItem('privKey', privKeyEnc)
                     localStorage.setItem('pubKey', pubKey)
                     localStorage.setItem('username', username);
-
+                    goToApp();
                 }
-        }));   
-
+            }));
     }
 }

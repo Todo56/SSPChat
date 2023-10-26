@@ -1,6 +1,6 @@
 
 particlesJS('particles-js',
-  
+
   {
     "particles": {
       "number": {
@@ -117,5 +117,4 @@ particlesJS('particles-js',
       "background_size": "cover"
     }
   }
-
 );

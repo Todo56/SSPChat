@@ -1,4 +1,4 @@
-module.exports.isAlphanumeric = function(str){
+module.exports.isAlphanumeric = function (str) {
     let code, i, len;
 
     for (i = 0, len = str.length; i < len; i++) {

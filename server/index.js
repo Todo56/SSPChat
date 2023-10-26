@@ -24,8 +24,8 @@ con.query(`
         active BOOL DEFAULT TRUE,
         PRIMARY KEY (userId)
     );
-`, function(err, rows, fields) {
-    if(err !== null){
+`, function (err, rows, fields) {
+    if (err !== null) {
         console.log('ERROR WHILE CREATING TABLE USERS')
     }
 });
@@ -39,8 +39,8 @@ con.query(`
         description TEXT DEFAULT NULL,
         PRIMARY KEY (chatId)
     );
-`, function(err, rows, fields) {
-    if(err !== null){
+`, function (err, rows, fields) {
+    if (err !== null) {
         console.log('ERROR WHILE CREATING TABLE CHATS')
     }
 });
@@ -54,8 +54,8 @@ con.query(`
         userId INT NOT NULL,
         PRIMARY KEY (messageId)
     );
-`, function(err, rows, fields) {
-    if(err !== null){
+`, function (err, rows, fields) {
+    if (err !== null) {
         console.log('ERROR WHILE CREATING TABLE MESSAGE')
         console.log(err)
     }
@@ -64,7 +64,7 @@ con.query(`
 
 app.use(express.json());
 
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Headers, Access-Control-Request-Method, Access-Control-Request-Headers, Authorization");
     res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, PATCH, OPTIONS');
@@ -78,43 +78,43 @@ app.post('/api/register', (req, res) => {
     let registerCode = req.body.registerCode;
 
     if (username === '' || pubKey === '' || privKey === '' || registerCode === '') {
-        return res.send({error: true, description: 'Please input all the required fields.'});
+        return res.send({ error: true, description: 'Please input all the required fields.' });
     }
 
     if (!utils.isAlphanumeric(username)) {
-        return res.send({error: true, description: 'Username must only consist of alphanumeric characters.'});
+        return res.send({ error: true, description: 'Username must only consist of alphanumeric characters.' });
     }
 
     if (!utils.isAlphanumeric(registerCode)) {
-        return res.send({error: true, description: 'Register code must only consist of alphanumeric characters.'});
+        return res.send({ error: true, description: 'Register code must only consist of alphanumeric characters.' });
     }
 
     if (username.length > 20 || username.length < 3) {
-        return res.send({error: true, description: 'Username must be between 3 and 20 characters.'});
+        return res.send({ error: true, description: 'Username must be between 3 and 20 characters.' });
     }
 
     if (registerCode.length !== 5) {
-        return res.send({error: true, description: 'Register code must be exactly 5 characters long.'});
+        return res.send({ error: true, description: 'Register code must be exactly 5 characters long.' });
     }
 
-    if(!config.app.registrationCodes.includes(registerCode)){
-        return res.send({error: true, description: 'This register code is not valid.'});
+    if (!config.app.registrationCodes.includes(registerCode)) {
+        return res.send({ error: true, description: 'This register code is not valid.' });
     }
 
     console.log(pubKey, privKey)
     con.query(
         `INSERT INTO users (username, pubKey, ePrivKey, avatar) VALUES (?, ?, ?, ?)`,
         [username, pubKey, privKey, 'default.png'],
-        function(err, results, fields){
+        function (err, results, fields) {
             console.log(err)
-            if(!err){
-                return res.send({error: false, description: 'Success!'})
+            if (!err) {
+                return res.send({ error: false, description: 'Success!' })
             } else {
-                
-                return res.send({error: true, description: 'There was a database issue while trying to create a new user. Contact the owner of this instance of SSP Chat for more information.'});
+
+                return res.send({ error: true, description: 'There was a database issue while trying to create a new user. Contact the owner of this instance of SSP Chat for more information.' });
             }
-    })
-}); 
+        })
+});
 
 app.listen(port, () => {
     console.log('Listening.');
