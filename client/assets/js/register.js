@@ -1,3 +1,8 @@
+function goToApp(){
+    console.log('red')
+    window.location.replace("./app/index.html");
+}
+
 function convertUIntArray8ToHex(arr){
     let string = ""
     for (let i = 0; i < arr.length; i++) {
@@ -32,6 +37,10 @@ let errorSet = false;
 function setErrorMessage(error) {
     errorSet = true;
     $('#message').html(error + '<br>');
+}
+
+if(localStorage.getItem('privKey') && localStorage.getItem('pubKey')){
+    goToApp();
 }
 
 function processRegistration() {
@@ -80,11 +89,8 @@ function processRegistration() {
 
     if (!errorSet) {
         keyPair = nacl.box.keyPair();
-        console.log(keyPair)
         privKey = convertUIntArray8ToHex(keyPair.secretKey);
         pubKey = convertUIntArray8ToHex(keyPair.publicKey);
-        console.log(privKey);
-        console.log(pubKey);
         let privKeyEnc = CryptoJS.AES.encrypt(privKey, password1).toString();
         localStorage.setItem('privKey', privKeyEnc)
         localStorage.setItem('pubKey', pubKey)
@@ -106,7 +112,14 @@ function processRegistration() {
             headers: {
                 "Content-type": "application/json; charset=UTF-8"
             }
-        });
+        }).then(response => 
+            response.json().then(data =>{
+                if(data.error){
+                    setErrorMessage(data.message)
+                } else {
+                    
+                }
+        }));   
 
     }
 }
