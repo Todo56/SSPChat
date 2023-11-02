@@ -1,5 +1,3 @@
-
-
 function convertUIntArray8ToHex(arr) {
     let string = ""
     for (let i = 0; i < arr.length; i++) {

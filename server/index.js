@@ -114,7 +114,27 @@ app.post('/api/register', (req, res) => {
         })
 });
 
-app.post("/api/login")
+app.post("/api/login", (req, res) =>{
+    let username = req.body.username;
+    if(username === ''){
+        return res.send({ error: true, description: 'Please input all the required fields.' });
+    }
+
+    if (!utils.isAlphanumeric(username)) {
+        return res.send({ error: true, description: 'Username must only consist of alphanumeric characters.' });
+    }
+
+    con.query(
+        `SELECT * FROM users WHERE username=? LIMIT 1`,
+        [username],
+        function (err, results, fields) {
+            console.log(results)
+            if(results.length == 0){
+                return res.send({error: true, description: 'User not found.'})
+            }
+            return res.send({error: false, data: results[0]})
+        })
+});
 
 app.listen(port, () => {
     console.log('Listening.');

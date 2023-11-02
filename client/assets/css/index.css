@@ -75,3 +75,7 @@ div.content {
     display: table-cell;
     vertical-align: middle;
 }
+
+#main-title {
+    font-size: 50px
+}
