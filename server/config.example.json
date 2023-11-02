@@ -9,6 +9,9 @@
     "app":{
         "port": 2000,
         "allowRegistrationWithoutCode": false,
-        "registrationCodes": ["ABC12"]
+        "registrationCodes": ["ABC12"],
+        "websocket": {
+            "port": 6969
+        }
     }
 }
