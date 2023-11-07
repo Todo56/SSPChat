@@ -136,6 +136,10 @@ app.post("/api/login", (req, res) =>{
         })
 });
 
+app.post('/api/data/users', (req, res) => {
+
+});
+
 app.listen(port, () => {
     console.log('Listening.');
 });

@@ -48,6 +48,15 @@ document.addEventListener("DOMContentLoaded", function (event) {
             linkColor.forEach(l => l.classList.remove('active'))
             this.classList.add('active')
         }
+        let otherWindows = document.querySelectorAll('.content');
+        otherWindows.forEach(c => c.classList.add('window'));
+        let elementId = this.id.substr(0, this.id.length - 4);
+        let element = document.getElementById(elementId);
+        element.classList.remove('window');
+
+
+        console.log(elementId)
+        console.log(this.id);
     }
     linkColor.forEach(l => l.addEventListener('click', colorLink))
 
