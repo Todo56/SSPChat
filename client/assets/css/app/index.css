@@ -195,3 +195,10 @@ a {
     visibility: hidden;
     display: none;
 }
+
+.ctable {
+    width: 100%;
+    background-color: var(--main-color);
+    color: var(--text-color);
+    border-radius: 10px;
+}

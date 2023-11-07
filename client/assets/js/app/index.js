@@ -12,7 +12,7 @@ if (!isLoggedIn()) {
 }
 
 
-
+let usersLoaded = false;
 
 
 document.addEventListener("DOMContentLoaded", function (event) {
@@ -54,7 +54,30 @@ document.addEventListener("DOMContentLoaded", function (event) {
         let element = document.getElementById(elementId);
         element.classList.remove('window');
 
-
+        if('new' == elementId){
+            let usersElement = document.getElementById('users')
+            fetch(config.server + "api/data/users", {
+                method: "GET",
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8"
+                }
+            }).then(response => 
+                response.json().then(data => {
+                    usersElement.innerHTML = ''
+                    for (let i = 0; i < data.data.length; i++) {
+                        usersElement.innerHTML = usersElement.innerHTML + `
+                    <tr>
+                        <th scope="row">${data.data[i].userId}</th>
+                        <td>${data.data[i].username}</td>
+                        <td>Otto</td>
+                        <td>@mdo</td>
+                    </tr>
+                        `                        
+                    }
+                    usersLoaded = true
+                    console.log(data)
+                }))
+        }
         console.log(elementId)
         console.log(this.id);
     }

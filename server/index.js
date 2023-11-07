@@ -128,7 +128,6 @@ app.post("/api/login", (req, res) =>{
         `SELECT * FROM users WHERE username=? LIMIT 1`,
         [username],
         function (err, results, fields) {
-            console.log(results)
             if(results.length == 0){
                 return res.send({error: true, description: 'User not found.'})
             }
@@ -136,8 +135,13 @@ app.post("/api/login", (req, res) =>{
         })
 });
 
-app.post('/api/data/users', (req, res) => {
-
+app.get('/api/data/users', (req, res) => {
+        con.query(
+        `SELECT userId, username, avatar, pubKey FROM users WHERE active=1;`,
+        function (err, results, fields) {
+            console.log(results)
+            return res.send({error: false, data: results})
+        })
 });
 
 app.listen(port, () => {
