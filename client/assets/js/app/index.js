@@ -14,6 +14,9 @@ if (!isLoggedIn()) {
 
 let usersLoaded = false;
 
+function createChat(pubKey){
+    
+}
 
 document.addEventListener("DOMContentLoaded", function (event) {
 
@@ -67,10 +70,10 @@ document.addEventListener("DOMContentLoaded", function (event) {
                     for (let i = 0; i < data.data.length; i++) {
                         usersElement.innerHTML = usersElement.innerHTML + `
                     <tr>
-                        <th scope="row">${data.data[i].userId}</th>
+                        <th scope="row"><div class="small"><img width='35px' src="../assets/img/default.png" alt="Profile Picture"></div></th>
+                        <td>${data.data[i].userId}</td>
                         <td>${data.data[i].username}</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
+                        <td><a class='btn btn-success' onclick='createChat("${data.data[i].pubKey}")'><i class='bx bx-message-dots nav_icon'></i></a></td>
                     </tr>
                         `                        
                     }
