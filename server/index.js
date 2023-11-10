@@ -1,67 +1,18 @@
-let express = require('express');
-let config = require("./config.json")
-let app = express();
-let port = config.app.port;
-let utils = require('./utils.js')
-let mysql = require('mysql2')
-let con = mysql.createPool({
-    host: config.database.host,
-    port: config.database.port,
-    user: config.database.username,
-    password: config.database.password,
-    database: config.database.database
-})
-module.exports.con = con;
-
-con.query(`
-    CREATE TABLE IF NOT EXISTS users(
-        userId INT AUTO_INCREMENT,
-        username VARCHAR(32) NOT NULL,
-        avatar VARCHAR(100) DEFAULT NULL,
-        pubKey VARCHAR(94) NOT NULL,
-        ePrivKey TEXT NOT NULL,
-        description TEXT DEFAULT NULL,
-        active BOOL DEFAULT TRUE,
-        PRIMARY KEY (userId)
-    );
-`, function (err, rows, fields) {
-    if (err !== null) {
-        console.log('ERROR WHILE CREATING TABLE USERS')
-    }
+const express = require('express');
+const config = require("./config.json")
+const app = express();
+const port = config.app.port;
+const utils = require('./utils.js')
+const loadDatabase = require('./modules/database.js');
+const con = require('./modules/database.js').con;
+const WebSocketServer = require('ws').WebSocketServer;
+const wss = new WebSocketServer({
+    port: config.app.websocket.port
 });
 
-con.query(`
-    CREATE TABLE IF NOT EXISTS chats(
-        chatId INT AUTO_INCREMENT,
-        userId1 INT NOT NULL,
-        userId2 INT NOT NULL,
-        creationDate INT NOT NULL,
-        description TEXT DEFAULT NULL,
-        PRIMARY KEY (chatId)
-    );
-`, function (err, rows, fields) {
-    if (err !== null) {
-        console.log('ERROR WHILE CREATING TABLE CHATS')
-    }
-});
+loadDatabase();
 
-con.query(`
-    CREATE TABLE IF NOT EXISTS message(
-        messageId INT AUTO_INCREMENT,
-        chatId INT NOT NULL,
-        content INT NOT NULL,
-        creationDate INT NOT NULL,
-        userId INT NOT NULL,
-        PRIMARY KEY (messageId)
-    );
-`, function (err, rows, fields) {
-    if (err !== null) {
-        console.log('ERROR WHILE CREATING TABLE MESSAGE')
-        console.log(err)
-    }
-});
-
-
+// TODO: separate API
 app.use(express.json());
 
 app.use(function (req, res, next) {
@@ -114,9 +65,9 @@ app.post('/api/register', (req, res) => {
         })
 });
 
-app.post("/api/login", (req, res) =>{
+app.post("/api/login", (req, res) => {
     let username = req.body.username;
-    if(username === ''){
+    if (username === '') {
         return res.send({ error: true, description: 'Please input all the required fields.' });
     }
 
@@ -128,22 +79,33 @@ app.post("/api/login", (req, res) =>{
         `SELECT * FROM users WHERE username=? LIMIT 1`,
         [username],
         function (err, results, fields) {
-            if(results.length == 0){
-                return res.send({error: true, description: 'User not found.'})
+            if (results.length == 0) {
+                return res.send({ error: true, description: 'User not found.' })
             }
-            return res.send({error: false, data: results[0]})
+            return res.send({ error: false, data: results[0] })
         })
 });
 
 app.get('/api/data/users', (req, res) => {
-        con.query(
+    con.query(
         `SELECT userId, username, avatar, pubKey FROM users WHERE active=1;`,
         function (err, results, fields) {
             console.log(results)
-            return res.send({error: false, data: results})
+            return res.send({ error: false, data: results })
         })
 });
 
 app.listen(port, () => {
     console.log('Listening.');
+});
+
+
+// TODO: moving ws stuff elsewhere.
+wss.on('connection', function connection(ws) {
+    ws.on('error', console.error);
+
+    ws.on('message', function message(data) {
+        console.log('received: %s', data);
+    });
+
 });

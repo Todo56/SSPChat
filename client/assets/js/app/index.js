@@ -14,8 +14,8 @@ if (!isLoggedIn()) {
 
 let usersLoaded = false;
 
-function createChat(pubKey){
-    
+function createChat(pubKey) {
+
 }
 
 document.addEventListener("DOMContentLoaded", function (event) {
@@ -57,32 +57,32 @@ document.addEventListener("DOMContentLoaded", function (event) {
         let element = document.getElementById(elementId);
         element.classList.remove('window');
 
-        if('new' == elementId){
+        if ('new' == elementId) {
             let usersElement = document.getElementById('users')
             fetch(config.server + "api/data/users", {
                 method: "GET",
                 headers: {
                     "Content-type": "application/json; charset=UTF-8"
                 }
-            }).then(response => 
+            }).then(response =>
                 response.json().then(data => {
                     usersElement.innerHTML = ''
                     for (let i = 0; i < data.data.length; i++) {
-                        usersElement.innerHTML = usersElement.innerHTML + `
-                    <tr>
-                        <th scope="row"><div class="small"><img width='35px' src="../assets/img/default.png" alt="Profile Picture"></div></th>
-                        <td>${data.data[i].userId}</td>
-                        <td>${data.data[i].username}</td>
-                        <td><a class='btn btn-success' onclick='createChat("${data.data[i].pubKey}")'><i class='bx bx-message-dots nav_icon'></i></a></td>
-                    </tr>
-                        `                        
+                        if (data.data[i].username !== localStorage.getItem('username')) {
+                            usersElement.innerHTML = usersElement.innerHTML + `
+                            <tr>
+                                <th scope="row"><div class="small"><img width='35px' src="../assets/img/default.png" alt="Profile Picture"></div></th>
+                                <td>${data.data[i].userId}</td>
+                                <td>${data.data[i].username}</td>
+                                <td><a class='btn btn-success' onclick='createChat("${data.data[i].pubKey}")'><i class='bx bx-message-dots nav_icon'></i></a></td>
+                            </tr>
+                        `;
+                        }
                     }
                     usersLoaded = true
                     console.log(data)
                 }))
         }
-        console.log(elementId)
-        console.log(this.id);
     }
     linkColor.forEach(l => l.addEventListener('click', colorLink))
 
