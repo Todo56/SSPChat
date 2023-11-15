@@ -10,7 +10,7 @@ let con = mysql.createPool({
 })
 module.exports.con = con;
 
-module.exports = function () {
+module.exports.setup = function () {
     con.query(`
     CREATE TABLE IF NOT EXISTS users(
         userId INT AUTO_INCREMENT,

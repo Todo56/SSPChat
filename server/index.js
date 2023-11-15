@@ -3,14 +3,12 @@ const config = require("./config.json")
 const app = express();
 const port = config.app.port;
 const utils = require('./utils.js')
-const loadDatabase = require('./modules/database.js');
+const db = require('./modules/database.js');
 const con = require('./modules/database.js').con;
 const WebSocketServer = require('ws').WebSocketServer;
-const wss = new WebSocketServer({
-    port: config.app.websocket.port
-});
 
-loadDatabase();
+
+db.setup();
 
 // TODO: separate API
 app.use(express.json());
@@ -90,22 +88,32 @@ app.get('/api/data/users', (req, res) => {
     con.query(
         `SELECT userId, username, avatar, pubKey FROM users WHERE active=1;`,
         function (err, results, fields) {
-            console.log(results)
             return res.send({ error: false, data: results })
         })
 });
 
 app.listen(port, () => {
-    console.log('Listening.');
+    console.log(`Listening port ${port}.`);
 });
 
+const wss = new WebSocketServer({
+    port: config.app.websocket.port
+});
 
+console.log(`WebSocket server operating in port ${config.app.websocket.port}.`);
 // TODO: moving ws stuff elsewhere.
-wss.on('connection', function connection(ws) {
-    ws.on('error', console.error);
+wss.on('connection', ws => {
+    ws.send('{"error": false, "message": "Connection was successful."}')
+    ws.on('close', () => {
 
-    ws.on('message', function message(data) {
-        console.log('received: %s', data);
+    })
+    ws.on('message', data => {
+
+    })
+    ws.on('createChat', data => {
+        console.log(data)
     });
-
-});
+    ws.onerror = function () {
+      console.log('websocket error')
+    }
+   });
