@@ -14,10 +14,6 @@ if (!isLoggedIn()) {
 
 let usersLoaded = false;
 
-function createChat(pubKey) {
-
-}
-
 document.addEventListener("DOMContentLoaded", function (event) {
 
     const showNavbar = (toggleId, navId, bodyId, headerId) => {
@@ -74,7 +70,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
                                 <th scope="row"><div class="small"><img width='35px' src="../assets/img/default.png" alt="Profile Picture"></div></th>
                                 <td>${data.data[i].userId}</td>
                                 <td>${data.data[i].username}</td>
-                                <td><a class='btn btn-success' onclick='createChat("${data.data[i].pubKey}")'><i class='bx bx-message-dots nav_icon'></i></a></td>
+                                <td><button class='' onclick="createChat('${data.data[i].pubKey}');" ><i class='bx bx-message-dots nav_icon'></i></button></td>
                             </tr>
                         `;
                         }
