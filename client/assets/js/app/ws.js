@@ -1,7 +1,8 @@
 console.log(config.ws)
-let webSocket = new WebSocket(config.ws);
+let webSocket = new WebSocket(config.ws + '?pubKey=' + localStorage.getItem('pubKey'));
 
 WebSocket.prototype.emit = function (eventName, payload) {
+    console.log(eventName, payload);
     this.send(JSON.stringify({eventName, payload}));
 }
 
@@ -10,7 +11,9 @@ webSocket.addEventListener("open", () => {
 });
 
 function createChat(pubKey){
-    console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA')
-    console.log('Creating chat...')
-    webSocket.emit('createChat', {'dqwdwqd': pubKey});
+    webSocket.emit('createChat', {'reciever': pubKey, 'initialMessage': 'Hello! I am ' + localStorage.getItem('username') + '.'});
+}
+
+function sendChat(pubKey, message){
+    webSocket.emit('sendChat', {'reciever': pubKey, 'message': message});
 }

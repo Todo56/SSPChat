@@ -1,3 +1,16 @@
+function convertUIntArray8ToHex(arr) {
+    let string = ""
+    for (let i = 0; i < arr.length; i++) {
+        let element = arr[i];
+        let str = element.toString(16)
+        console.log(str)
+        string = string + str + '.';
+    }
+    string = string.slice(0, -1);
+    return string;
+}
+
+
 function logout() {
     localStorage.clear();
     window.location.replace("../index.html");
@@ -15,6 +28,20 @@ if (!isLoggedIn()) {
 let usersLoaded = false;
 
 document.addEventListener("DOMContentLoaded", function (event) {
+
+
+    fetch(config.server + "api/data/chats", {
+        method: "GET",
+        headers: {
+            "Content-type": "application/json; charset=UTF-8",
+            "Authentication": localStorage.getItem('privKey'),
+            "pubKey": localStorage.getItem('ePrivKey')
+        }
+    }).then(response =>
+        response.json().then(data => {
+            
+        }))
+
 
     const showNavbar = (toggleId, navId, bodyId, headerId) => {
         const toggle = document.getElementById(toggleId),

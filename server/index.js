@@ -6,7 +6,7 @@ const utils = require('./utils.js')
 const db = require('./modules/database.js');
 const con = require('./modules/database.js').con;
 const WebSocketServer = require('ws').WebSocketServer;
-
+const url = require('node:url');
 
 db.setup();
 
@@ -92,6 +92,15 @@ app.get('/api/data/users', (req, res) => {
         })
 });
 
+app.get('/api/data/chats', (req,res) =>{
+    console.log(req.headers)
+    res.send("{'potato': 'a'}")
+});
+
+app.get('/api/data/messages/:chatId', (req,res) =>{
+
+})
+
 app.listen(port, () => {
     console.log(`Listening port ${port}.`);
 });
@@ -102,17 +111,34 @@ const wss = new WebSocketServer({
 
 console.log(`WebSocket server operating in port ${config.app.websocket.port}.`);
 // TODO: moving ws stuff elsewhere.
-wss.on('connection', ws => {
+wss.on('connection', (ws, req) => {
+    const parameters = url.parse(req.url, true);
+    ws.pubKey = parameters.query.pubKey;
+
     ws.send('{"error": false, "message": "Connection was successful."}')
     ws.on('close', () => {
 
     })
     ws.on('message', data => {
+        console.log(ws.url)
+        try {
+            let info = JSON.parse(data.toString());
+            switch (info.eventName) {
+                case 'createChat':
+                    con.query('INSERT INTO chats()')
+                    break;
+                case 'sendMessage':
 
+                    break;
+                default:
+                    break;
+            }
+            console.log(info)
+        } catch (error) {
+            console.log('Invalid JSON recieved.')
+        }
     })
-    ws.on('createChat', data => {
-        console.log(data)
-    });
+
     ws.onerror = function () {
       console.log('websocket error')
     }

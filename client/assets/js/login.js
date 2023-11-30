@@ -73,6 +73,7 @@ function processPassword(){
         localStorage.setItem('privKey', privKey);
         localStorage.setItem('pubKey', convertHexToUInt8Array(dataRecieved.pubKey));
         localStorage.setItem('username', dataRecieved.username);
+        localStorage.setItem('ePrivKey', dataRecieved.ePrivKey);
         goToApp();
     } catch( e){
         console.log(e)
