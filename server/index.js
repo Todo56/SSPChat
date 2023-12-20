@@ -114,18 +114,21 @@ console.log(`WebSocket server operating in port ${config.app.websocket.port}.`);
 wss.on('connection', (ws, req) => {
     const parameters = url.parse(req.url, true);
     ws.pubKey = parameters.query.pubKey;
-
+    ws.hexPubKey = utils.intArrayToHex(ws.pubKey.split(','));
     ws.send('{"error": false, "message": "Connection was successful."}')
     ws.on('close', () => {
 
     })
     ws.on('message', data => {
-        console.log(ws.url)
+        console.log(ws.pubKey)
         try {
             let info = JSON.parse(data.toString());
             switch (info.eventName) {
                 case 'createChat':
-                    con.query('INSERT INTO chats()')
+                    console.log(info)
+                    con.query(`SELECT * FROM chats WHERE userId1='${info.payload.reciever}' OR userId1='${ws.pubKey}';`)
+                    con.query(`INSERT INTO chats(userId1, userId2, description) VALUES ('${ws.pubKey}', '${info.payload.reciever}', '');`);
+                    
                     break;
                 case 'sendMessage':
 
@@ -133,7 +136,6 @@ wss.on('connection', (ws, req) => {
                 default:
                     break;
             }
-            console.log(info)
         } catch (error) {
             console.log('Invalid JSON recieved.')
         }

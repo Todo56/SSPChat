@@ -11,3 +11,17 @@ module.exports.isAlphanumeric = function (str) {
     }
     return true;
 }
+module.exports.intArrayToHex = function(arr){
+    let string = ""
+    for (let i = 0; i < arr.length; i++) {
+        let element = parseInt(arr[i]);
+        let str = element.toString(16)
+        string = string + str + '.';
+    }
+    string = string.slice(0, -1);
+    return string;
+}
+
+module.exports.hexToArray = function(str){
+    
+}
