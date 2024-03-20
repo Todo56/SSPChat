@@ -31,9 +31,9 @@ module.exports.setup = function () {
     con.query(`
     CREATE TABLE IF NOT EXISTS chats(
         chatId INT AUTO_INCREMENT,
-        userId1 INT NOT NULL,
-        userId2 INT NOT NULL,
-        creationDate INT NOT NULL,
+        userKey1 VARCHAR(94) NOT NULL,
+        userKey2 VARCHAR(94) NOT NULL,
+        creationDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
         description TEXT DEFAULT NULL,
         PRIMARY KEY (chatId)
     );

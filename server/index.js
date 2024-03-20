@@ -30,16 +30,19 @@ wss.on('connection', (ws, req) => {
             switch (info.eventName) {
                 case 'createChat':
                     console.log(info)
-                    
-                    con.query(`SELECT * FROM chats WHERE (userId1='${info.payload.reciever}' OR userId1='${ws.pubKey}) AND (userId1='${ws.pubKey}' OR userId1='${info.payload.reciever})' LIMIT 1;`,
-                    function (err, results, fields) {
-                        if (results.length == 1) {
-                            return ws.send({type: 'msg', error: true, description: 'A chat with this user already exists!' })
-                          }
-                          con.query(`INSERT INTO chats(userId1, userId2, description) VALUES ('${ws.pubKey}', '${info.payload.reciever}', '${ws.pubKey}');`);
+                    let sender = utils.intArrayToHex(ws.pubKey.split(','))
+                    con.query(`SELECT * FROM chats WHERE (userKey1='${info.payload.reciever}' OR userKey1='${sender}') AND (userKey1='${sender}' OR userKey1='${info.payload.reciever}') LIMIT 1;`,
+                        function (err, results, fields) {
+                            if (results.length == 1) {
+                                return ws.send(JSON.stringify({ type: 'notice', error: true, description: 'A chat with this user already exists!' }))
+                            }
+                            con.query(`INSERT INTO chats(userKey1, userKey2, description) VALUES ('${sender}', '${info.payload.reciever}', '${sender}');`, function(err){
+                                console.log(err)
+                            });
 
-                        return  ws.send({type: 'msg', error: false, description: 'Chat created successfully.' })
-                    });                    
+                            return ws.send(JSON.stringify({ type: 'notice', error: false, description: 'Chat created successfully.' }))
+
+                        });
                     break;
                 case 'sendMessage':
 
@@ -53,6 +56,6 @@ wss.on('connection', (ws, req) => {
     })
 
     ws.onerror = function () {
-      console.log('websocket error')
+        console.log('websocket error')
     }
-   });
+});

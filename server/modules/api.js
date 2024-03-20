@@ -88,7 +88,23 @@ function start(){
     
     app.get('/api/data/chats', (req,res) =>{
         console.log(req.headers)
-        res.send("{'potato': 'a'}")
+        if(req.headers.Auth == undefined || req.headers.PubKey == undefined){
+            return res.send('{"type": "notice", "error": true, "description": "Invalid headers."}')
+        }
+        let key = utils.intArrayToHex(req.headers.pubKey.split(','))
+        con.query(`SELECT * FROM users WHERE ePrivKey='${req.headers.Auth}' AND pubKey='${key}' LIMIT 1;`, function(err, results){
+            if(results.length !== 1){
+                return res.send('{"type": "notice", "error": true, "description": "Invalid credentials."}')
+            } else {
+                con.query(`SELECT * FROM chats WHERE userKey1= '${key}' OR userKey2='${key}';`, (err, results) =>{
+                    if(results.length !== 1){
+                        res.send(`{"type": "chats", "empty": true, "data": "This looks very empty! Start chatting."}`)
+                    } else {
+                        res.send(JSON.stringify({"type": "chats", "empty": false, "data": results}))
+                    }
+                })
+            }
+        })
     });
     
     app.get('/api/data/messages/:chatId', (req,res) =>{

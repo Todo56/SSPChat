@@ -105,6 +105,21 @@ document.addEventListener("DOMContentLoaded", function (event) {
                     usersLoaded = true
                     console.log(data)
                 }))
+        } else if ('chats' == elementId){
+            let usersElement = document.getElementById('chatBoxes')
+            fetch(config.server + "api/data/chats", {
+                method: "GET",
+                headers: {
+                    "Content-type": "application/json; charset=UTF-8",
+                    "Auth": localStorage.getItem('ePrivKey'),
+                    "PubKey": localStorage.getItem('pubKey')
+                }
+            }).then(response =>
+                response.json().then(data => {
+                    usersElement.innerHTML = ''
+                    console.log(data)
+                    usersLoaded = true
+                }))
         }
     }
     linkColor.forEach(l => l.addEventListener('click', colorLink))
