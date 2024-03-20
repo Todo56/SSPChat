@@ -31,38 +31,46 @@ function setErrorMessage(error) {
 }
 let dataRecieved;
 function processLogin(){
+    console.log('Processing input')
     let username = $('#usernameInput').val();
-    fetch(config.server + "api/login", {
-        method: "POST",
-        body: JSON.stringify({
-            username: username
-        }),
-        headers: {
-            "Content-type": "application/json; charset=UTF-8"
-        }
-    }).then(response => 
-        response.json().then(data => {
-            if(data.error){
-                setErrorMessage(data.description);
-                return;
+    try {
+        fetch(config.server + "api/login", {
+            method: "POST",
+            body: JSON.stringify({
+                username: username
+            }),
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
             }
-            $('#box').html(`
-            <h3>Welcome ${data.data.username}!</h3>
-            <hr />
-            <p class='text-start'>Your public key is ${data.data.pubKey}, your private key is currently encrypted. Please input the password to decrypt your private key and be able to send messages.</p>
-            <form>
-                <div class="form-group" id="nextData">
-                    <label for="passwordInput">Password</label>
-                    <input type="password" class="form-control" id="passwordInput" placeholder="Password">
-                </div>
-                <br>
-                <div id="message"></div>
-                <br>
-                <a class="button-34" role="button" onclick="processPassword()">Unencrypt</a>
-            </form>
-            `)
-            dataRecieved = data.data;
-        }));
+        }).then(response => 
+            response.json().then(data => {
+                if(data.error){
+                    setErrorMessage(data.description);
+                    return;
+                }
+                $('#box').html(`
+                <h3>Welcome ${data.data.username}!</h3>
+                <hr />
+                <p class='text-start'>Your public key is ${data.data.pubKey}, your private key is currently encrypted. Please input the password to decrypt your private key and be able to send messages.</p>
+                <form>
+                    <div class="form-group" id="nextData">
+                        <label for="passwordInput">Password</label>
+                        <input type="password" class="form-control" id="passwordInput" placeholder="Password">
+                    </div>
+                    <br>
+                    <div id="message"></div>
+                    <br>
+                    <a class="button-34" role="button" onclick="processPassword()">Unencrypt</a>
+                </form>
+                `)
+                dataRecieved = data.data;
+            }));
+    } catch (error) {
+        console.log('caught error.')
+
+        setErrorMessage('An error occured when trying to reach out to the server. Please contact the server administrator.')
+    }
+
 }
 
 function processPassword(){
