@@ -9,7 +9,28 @@ function convertUIntArray8ToHex(arr) {
     string = string.slice(0, -1);
     return string;
 }
+function loadChat(chat) {
+    let chatBoxes = document.getElementById('chatBoxes')
+    let chatting = document.getElementById('chatting')
 
+    chatBoxes.innerHTML = '';
+    chatting.innerHTML = `<div class="spinner-border" role="status">
+  </div>`;
+    fetch(config.server + "api/data/messages/" + chat, {
+        method: "GET",
+        headers: {
+            "Content-type": "application/json; charset=UTF-8",
+            "authentication": localStorage.getItem('ePrivKey'),
+            "PubKey": localStorage.getItem('pubKey')
+        }
+    }).then(response =>
+        response.json().then(data => {     
+            console.log(data) 
+        })
+
+    )
+    console.log('Youa re talking to ' + chat)
+}
 
 function logout() {
     localStorage.clear();
@@ -39,7 +60,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
         }
     }).then(response =>
         response.json().then(data => {
-            
+
         }))
 
 
@@ -105,20 +126,25 @@ document.addEventListener("DOMContentLoaded", function (event) {
                     usersLoaded = true
                     console.log(data)
                 }))
-        } else if ('chats' == elementId){
-            let usersElement = document.getElementById('chatBoxes')
+        } else if ('chats' == elementId) {
+            let chatsElement = document.getElementById('chatBoxes')
             fetch(config.server + "api/data/chats", {
                 method: "GET",
                 headers: {
                     "Content-type": "application/json; charset=UTF-8",
-                    "Auth": localStorage.getItem('ePrivKey'),
+                    "authentication": localStorage.getItem('ePrivKey'),
                     "PubKey": localStorage.getItem('pubKey')
                 }
             }).then(response =>
                 response.json().then(data => {
-                    usersElement.innerHTML = ''
+                    for (let i = 0; i < data.data.length; i++) {
+                        chatsElement.innerHTML = chatsElement.innerHTML + `
+                        <button type="button" onclick="loadChat('${data.data[i].chatId}');" class="btn btn-primary">
+                        Chat with ${data.data[i].userKey2}</button>
+                        `;
+                    }
                     console.log(data)
-                    usersLoaded = true
+                    chatsLoaded = true
                 }))
         }
     }

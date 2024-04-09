@@ -47,8 +47,8 @@ module.exports.setup = function () {
     CREATE TABLE IF NOT EXISTS message(
         messageId INT AUTO_INCREMENT,
         chatId INT NOT NULL,
-        content INT NOT NULL,
-        creationDate INT NOT NULL,
+        content TEXT,
+        creationDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
         userId INT NOT NULL,
         PRIMARY KEY (messageId)
     );

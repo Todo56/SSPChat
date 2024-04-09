@@ -5,14 +5,15 @@ const utils = require('../utils.js')
 const con = require('./database.js').con;
 const port = config.app.port;
 function start(){
-    app.use(express.json());
 
-    app.use(function (req, res, next) {
+    app.use(function(req, res, next) {
         res.header("Access-Control-Allow-Origin", "*");
-        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Headers, Access-Control-Request-Method, Access-Control-Request-Headers, Authorization");
-        res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, PATCH, OPTIONS');
+        res.header("Access-Control-Allow-Methods", "GET, PUT, POST");
+        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, PubKey, Auth, pubKey, pubkey, authentication");
         next();
-    });
+      });
+
+    app.use(express.json());
     
     app.post('/api/register', (req, res) => {
         let username = req.body.username;
@@ -88,11 +89,12 @@ function start(){
     
     app.get('/api/data/chats', (req,res) =>{
         console.log(req.headers)
-        if(req.headers.Auth == undefined || req.headers.PubKey == undefined){
+        if(req.headers.authentication == undefined || req.headers.pubkey == undefined){
             return res.send('{"type": "notice", "error": true, "description": "Invalid headers."}')
         }
-        let key = utils.intArrayToHex(req.headers.pubKey.split(','))
-        con.query(`SELECT * FROM users WHERE ePrivKey='${req.headers.Auth}' AND pubKey='${key}' LIMIT 1;`, function(err, results){
+        console.log('Surprise!')
+        let key = utils.intArrayToHex(req.headers.pubkey.split(','))
+        con.query(`SELECT * FROM users WHERE ePrivKey='${req.headers.authentication}' AND pubKey='${key}' LIMIT 1;`, function(err, results){
             if(results.length !== 1){
                 return res.send('{"type": "notice", "error": true, "description": "Invalid credentials."}')
             } else {
@@ -108,7 +110,19 @@ function start(){
     });
     
     app.get('/api/data/messages/:chatId', (req,res) =>{
-    
+        if(req.headers.authentication == undefined || req.headers.pubkey == undefined){
+            return res.send('{"type": "notice", "error": true, "description": "Invalid headers."}')
+        }
+        let key = utils.intArrayToHex(req.headers.pubkey.split(','))
+        con.query(`SELECT * FROM users WHERE ePrivKey='${req.headers.authentication}' AND pubKey='${key}' LIMIT 1;`, function(err, results){
+            if(results.length !== 1){
+                return res.send('{"type": "notice", "error": true, "description": "Invalid credentials."}')
+            } else {
+                con.query(`SELECT * FROM message WHERE chatId=${req.params.chatId} LIMIT = 100;`, function(err, results){
+                    res.send(JSON.stringify({"type": "messages", "empty": false, "data": results}))
+                })
+            }
+        })
     })
     
     app.listen(port, () => {
