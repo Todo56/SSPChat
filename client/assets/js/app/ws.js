@@ -32,6 +32,6 @@ function createChat(pubKey){
     webSocket.emit('createChat', {'reciever': pubKey, 'initialMessage': 'Hello! I am ' + localStorage.getItem('username') + '.'});
 }
 
-function sendChat(pubKey, message){
-    webSocket.emit('sendChat', {'reciever': pubKey, 'message': message});
+function sendChat(chatId, message){
+    webSocket.emit('sendChat', {'chatId': chatId, 'message': message});
 }

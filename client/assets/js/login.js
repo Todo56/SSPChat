@@ -64,6 +64,7 @@ function processLogin(){
                 </form>
                 `)
                 dataRecieved = data.data;
+                localStorage.setItem('userId') = data.data.userId;
             }));
     } catch (error) {
         console.log('caught error.')

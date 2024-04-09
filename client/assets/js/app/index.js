@@ -9,10 +9,16 @@ function convertUIntArray8ToHex(arr) {
     string = string.slice(0, -1);
     return string;
 }
+
+function sendMessage(chatId){
+    let chatbox = document.getElementById('messageBox')
+    sendChat(chatId, chatbox.value)
+}
+
 function loadChat(chat) {
     let chatBoxes = document.getElementById('chatBoxes')
     let chatting = document.getElementById('chatting')
-
+    let chatTitle = document.getElementById('chatTitle')
     chatBoxes.innerHTML = '';
     chatting.innerHTML = `<div class="spinner-border" role="status">
   </div>`;
@@ -24,11 +30,30 @@ function loadChat(chat) {
             "PubKey": localStorage.getItem('pubKey')
         }
     }).then(response =>
-        response.json().then(data => {     
-            console.log(data) 
+        response.json().then(data => {
+            chatting.innerHTML = '';
+            for (let i = 0; i < data.data.length; i++) {
+                let message = data.data[i]
+                chatBoxes.innerHTML = chatBoxes.innerHTML + `
+                <div class="alert ${message.userId === localStorage.getItem('userId') ? 'alert-light' : 'alert-primary'}" role="alert">
+                ${message.content}
+              </div>
+                `;
+                console.log(data.data[i])
+            }
+
+            chatBoxes.innerHTML = chatBoxes.innerHTML + `
+            <footer class="text-muted bg-dark">
+                <div class="input-group mb-3">
+                    <input id="messageBox" type="text" class="form-control btn-success" placeholder="Content" aria-label="Recipient's username" aria-describedby="button-addon2">
+                    <button onclick="sendMessage(${chat})" class="btn btn-outline-secondary" type="button" id="button-addon2">Button</button>
+                </div>
+            </footer>
+            `
         })
 
     )
+    chatTitle.innerHTML = 'Chatting with' + '.......';
     console.log('Youa re talking to ' + chat)
 }
 

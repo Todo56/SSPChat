@@ -118,7 +118,9 @@ function start(){
             if(results.length !== 1){
                 return res.send('{"type": "notice", "error": true, "description": "Invalid credentials."}')
             } else {
-                con.query(`SELECT * FROM message WHERE chatId=${req.params.chatId} LIMIT = 100;`, function(err, results){
+                console.log(req.params.chatId)
+                con.query(`SELECT * FROM message WHERE chatId=${req.params.chatId} LIMIT 100;`, function(err, results){
+                    console.log(err)
                     res.send(JSON.stringify({"type": "messages", "empty": false, "data": results}))
                 })
             }
